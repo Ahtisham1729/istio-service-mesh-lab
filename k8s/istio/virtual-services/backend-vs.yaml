@@ -1,0 +1,26 @@
+# VirtualService: traffic splitting between backend v1 and v2
+#
+# EXPERIMENT: Change the weights to shift traffic between versions
+# - 100/0:  all traffic to v1 (safe, default)
+# - 90/10:  canary release (10% to v2)
+# - 50/50:  A/B testing
+# - 0/100:  full rollout to v2
+#
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: backend
+  namespace: mesh-lab
+spec:
+  hosts:
+    - backend
+  http:
+    - route:
+        - destination:
+            host: backend
+            subset: v1
+          weight: 90
+        - destination:
+            host: backend
+            subset: v2
+          weight: 10

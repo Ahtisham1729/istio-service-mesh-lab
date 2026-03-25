@@ -1,0 +1,17 @@
+# Gateway: entry point for external traffic into the mesh
+# This configures the Istio ingress gateway to accept HTTP traffic on port 80
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: mesh-lab-gateway
+  namespace: mesh-lab
+spec:
+  selector:
+    istio: ingressgateway   # use Istio's default ingress gateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"   # Accept traffic for any host (lab environment)

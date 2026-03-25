@@ -1,0 +1,224 @@
+---
+# Namespace is created by the install script with istio-injection=enabled
+# These manifests assume namespace: mesh-lab
+
+# ============================================================
+# Frontend
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: mesh-lab
+  labels:
+    app: frontend
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: frontend
+        version: v1
+    spec:
+      containers:
+        - name: frontend
+          image: frontend:local
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BACKEND_URL
+              value: "http://backend.mesh-lab.svc.cluster.local:8080"
+            - name: ORDER_URL
+              value: "http://order-service.mesh-lab.svc.cluster.local:8080"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: mesh-lab
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+
+---
+# ============================================================
+# Backend v1
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-v1
+  namespace: mesh-lab
+  labels:
+    app: backend
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: v1
+    spec:
+      containers:
+        - name: backend
+          image: backend:local
+          ports:
+            - containerPort: 8080
+          env:
+            - name: VERSION
+              value: "v1"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+
+---
+# ============================================================
+# Backend v2 (canary)
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-v2
+  namespace: mesh-lab
+  labels:
+    app: backend
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: v2
+    spec:
+      containers:
+        - name: backend
+          image: backend:local
+          ports:
+            - containerPort: 8080
+          env:
+            - name: VERSION
+              value: "v2"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: mesh-lab
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+
+---
+# ============================================================
+# Order Service
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: mesh-lab
+  labels:
+    app: order-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: order-service
+        version: v1
+    spec:
+      containers:
+        - name: order-service
+          image: order-service:local
+          ports:
+            - containerPort: 8080
+          env:
+            - name: VERSION
+              value: "v1"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: mesh-lab
+spec:
+  selector:
+    app: order-service
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http

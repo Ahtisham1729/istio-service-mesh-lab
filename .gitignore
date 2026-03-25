@@ -1,0 +1,19 @@
+# Istio download artifacts
+istio-*/
+
+# Kubernetes config (don't commit credentials)
+kubeconfig
+*.kubeconfig
+
+# Load test results (generated)
+results-*.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo

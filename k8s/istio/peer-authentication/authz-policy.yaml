@@ -1,0 +1,24 @@
+# AuthorizationPolicy: restrict which services can call order-service
+#
+# Only frontend is allowed to call order-service
+# This demonstrates service-level RBAC within the mesh
+#
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: order-service-policy
+  namespace: mesh-lab
+spec:
+  selector:
+    matchLabels:
+      app: order-service
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/mesh-lab/sa/default"
+      to:
+        - operation:
+            methods: ["GET"]
+            paths: ["/api/orders*", "/health"]

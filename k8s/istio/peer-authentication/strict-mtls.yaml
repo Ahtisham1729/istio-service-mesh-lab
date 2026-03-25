@@ -1,0 +1,18 @@
+# PeerAuthentication: enforce STRICT mTLS for all services in mesh-lab
+#
+# EXPERIMENT SEQUENCE:
+# 1. Start with PERMISSIVE (default) - both plaintext and mTLS work
+# 2. Switch to STRICT - only mTLS traffic allowed
+# 3. Verify in Kiali that all traffic shows the lock icon (encrypted)
+# 4. Try calling a service from outside the mesh - it should fail
+#
+
+# Namespace-wide STRICT mTLS
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: mesh-lab-strict-mtls
+  namespace: mesh-lab
+spec:
+  mtls:
+    mode: STRICT
