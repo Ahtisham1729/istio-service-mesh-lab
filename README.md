@@ -8,22 +8,22 @@ A hands-on exploration of Istio service mesh concepts using a multi-service micr
                     ┌─────────────────────────────────────────────┐
                     │              k3s Cluster                    │
                     │                                             │
-  Client ──────►   │  Istio Ingress    ┌──────────┐              │
+  Client ──────►    │  Istio Ingress    ┌──────────┐              │
                     │  Gateway ────────►│ frontend │              │
                     │                   │ (v1)     │              │
                     │                   └────┬─────┘              │
                     │                        │                    │
-                    │              ┌─────────┴──────────┐        │
-                    │              ▼                     ▼        │
-                    │        ┌──────────┐        ┌────────────┐  │
-                    │        │ backend  │        │ order-svc   │  │
-                    │        │ (v1, v2) │        │ (v1)        │  │
-                    │        └──────────┘        └─────────────┘  │
+                    │              ┌─────────┴──────────┐         │
+                    │              ▼                    ▼         │
+                    │        ┌──────────┐        ┌────────────┐   │
+                    │        │ backend  │        │ order-svc  │   │
+                    │        │ (v1, v2) │        │ (v1)       │   │
+                    │        └──────────┘        └────────────┘   │
                     │                                             │
-                    │   ┌─────────┐  ┌───────┐  ┌───────────┐   │
-                    │   │ Kiali   │  │Jaeger │  │ Prometheus │   │
-                    │   │         │  │       │  │ + Grafana  │   │
-                    │   └─────────┘  └───────┘  └───────────┘   │
+                    │   ┌─────────┐  ┌───────┐  ┌───────────┐     │
+                    │   │ Kiali   │  │Jaeger │  │ Prometheus│     │
+                    │   │         │  │       │  │ + Grafana │     │
+                    │   └─────────┘  └───────┘  └───────────┘     │
                     └─────────────────────────────────────────────┘
 ```
 
@@ -55,31 +55,6 @@ A hands-on exploration of Istio service mesh concepts using a multi-service micr
 # 4. Verify everything is running
 ./scripts/04-verify.sh
 ```
-
-## Two-Week Project Plan
-
-### Week 1: Foundation + Traffic Management
-
-| Day | Focus | Deliverable |
-|-----|-------|-------------|
-| 1-2 | Setup k3s, install Istio, deploy sample apps | Working cluster with sidecar injection |
-| 3 | Istio Gateway + VirtualService basics | External traffic reaching frontend |
-| 4 | Traffic splitting: route 90/10 between backend v1/v2 | Canary deployment working |
-| 5 | Fault injection: inject 5s delay + 503 errors into order-service | Resilience testing demo |
-| 6 | Timeouts + retries: configure timeout policies | Graceful degradation |
-| 7 | Review + document Week 1 learnings | `docs/week1-traffic-management.md` |
-
-### Week 2: Security + Observability + Evaluation
-
-| Day | Focus | Deliverable |
-|-----|-------|-------------|
-| 8 | mTLS: enable STRICT mode, verify with Kiali | Encrypted service-to-service traffic |
-| 9 | Authorization policies: restrict who can call order-service | RBAC between services |
-| 10 | Observability: Kiali service graph, Jaeger tracing | Distributed traces visualized |
-| 11 | Prometheus metrics + Grafana dashboards for Istio | Custom dashboard for mesh metrics |
-| 12 | Load testing with `hey` or `k6`, observe mesh behavior | Performance baseline with/without mesh |
-| 13 | Write evaluation doc: "Should we adopt Istio?" | `docs/istio-evaluation.md` |
-| 14 | Polish repo, clean up README, final review | Portfolio-ready repo |
 
 ## Repository Structure
 
